@@ -1,0 +1,15 @@
+{
+  "asociados": {
+    "123456": {
+      "identificacion": "123456",
+      "nombre": "Ana",
+      "telefono": "3103103100",
+      "anos_caficultor": 4,
+      "numero_fincas": 0,
+      "estado": "activo"
+    }
+  },
+  "fincas": {},
+  "cosechas": {},
+  "ventas": {}
+}

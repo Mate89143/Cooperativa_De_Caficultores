@@ -1,4 +1,5 @@
 from servicios import CooperativaService
+from persistencia import guardar
 
 # ── Helpers de presentación ───────────────────────────────────
 
@@ -315,6 +316,7 @@ def main():
         elif op == "3": menu_cosechas(s)
         elif op == "4": menu_ventas(s)
         elif op == "0":
+            guardar(s)
             print("\n  ¡Hasta pronto! ☕\n")
             break
         else:

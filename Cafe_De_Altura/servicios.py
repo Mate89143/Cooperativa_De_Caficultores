@@ -1,6 +1,6 @@
 from modelos import Asociado, Finca, Cosecha, Venta
 from typing import List, Optional
-
+from persistencia import guardar, cargar
 
 class CooperativaService:
 
@@ -9,6 +9,7 @@ class CooperativaService:
         self._fincas    = {}
         self._cosechas  = {}
         self._ventas    = {}
+        cargar(self)
 
 
     # ══════════════════════════════════════════════════════
@@ -24,6 +25,7 @@ class CooperativaService:
 
         asociado = Asociado(identificacion, nombre, telefono, años_caficultor)
         self._asociados[identificacion] = asociado
+        guardar(self)
         return asociado
 
     # ── A2. READ ────────────────────────────────────────
@@ -53,7 +55,8 @@ class CooperativaService:
         for campo, valor in campos.items():
             if campo not in permitidos:
                 raise ValueError(f"No se puede modificar el campo '{campo}'.")
-            setattr(asociado, campo, valor)   # asigna el atributo dinámicamente
+            setattr(asociado, campo, valor)
+        guardar(self)
         return asociado
 
     # ── A4. DELETE ──────────────────────────────────────
@@ -73,8 +76,8 @@ class CooperativaService:
 
         nombre = self._asociados[identificacion].nombre
         del self._asociados[identificacion]
+        guardar(self)
         return nombre
-
 
     # ══════════════════════════════════════════════════════
     #  SECCIÓN B — CRUD FINCAS
@@ -94,6 +97,7 @@ class CooperativaService:
                       area_hectareas, variedades, id_asociado)
         self._fincas[codigo] = finca
         asociado.numero_fincas += 1   # actualizar contador
+        guardar(self)
         return finca
 
     # ── B2. READ ────────────────────────────────────────
@@ -117,6 +121,7 @@ class CooperativaService:
             if campo not in permitidos:
                 raise ValueError(f"Campo '{campo}' no editable en Finca.")
             setattr(finca, campo, valor)
+        guardar(self)
         return finca
 
     # ── B4. DELETE ──────────────────────────────────────
@@ -135,6 +140,7 @@ class CooperativaService:
             self._asociados[finca.id_asociado].numero_fincas -= 1
 
         del self._fincas[codigo]
+        guardar(self)
         return finca.nombre
 
 
@@ -154,6 +160,7 @@ class CooperativaService:
         cosecha = Cosecha(numero, codigo_finca, temporada,
                           variedad_cafe, cantidad_kg, fecha_recoleccion)
         self._cosechas[numero] = cosecha
+        guardar(self)
         return cosecha
 
     # ── C2. READ ────────────────────────────────────────
@@ -178,6 +185,7 @@ class CooperativaService:
             if campo not in permitidos:
                 raise ValueError(f"Campo '{campo}' no editable en Cosecha.")
             setattr(cosecha, campo, valor)
+        guardar(self)
         return cosecha
 
     # ── C4. DELETE ──────────────────────────────────────
@@ -193,6 +201,7 @@ class CooperativaService:
                 f"{len(ventas_propias)} venta(s) registrada(s).")
 
         del self._cosechas[numero]
+        guardar(self)
         return cosecha.numero
 
 
@@ -226,6 +235,7 @@ class CooperativaService:
         self._ventas[numero_venta] = venta
 
         cosecha.cantidad_kg = round(cosecha.cantidad_kg - cantidad_kg, 2)  # descontar
+        guardar(self)
         return venta
 
     # ── D2. READ ────────────────────────────────────────
@@ -246,6 +256,7 @@ class CooperativaService:
             if campo not in permitidos:
                 raise ValueError(f"Campo '{campo}' no editable directamente.")
             setattr(venta, campo, valor)
+        guardar(self)
         return venta
 
     # ── D4. DELETE ──────────────────────────────────────
@@ -257,4 +268,5 @@ class CooperativaService:
 
         if venta.numero_cosecha in self._cosechas:
             self._cosechas[venta.numero_cosecha].cantidad_kg += venta.cantidad_kg
+        guardar(self)
         return numero_venta
